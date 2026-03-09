@@ -1,0 +1,95 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+MANIFEST
+.eggs/
+*.dmg
+*.dmg.zip
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ── uv ────────────────────────────────────────────────────────────────────────
+# uv.lock is intentionally committed for reproducible installs
+# .python-version is fine to commit too; ignore local overrides:
+.python-version.local
+
+# ── Testing & coverage ────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.coveragerc.local
+
+# ── Linting / type checking ───────────────────────────────────────────────────
+.ruff_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# ── macOS ─────────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ── IDEs & editors ────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.cursor/
+.claude/
+*.swp
+*.swo
+*~
+.project
+.classpath
+*.sublime-project
+*.sublime-workspace
+
+# ── Environment & secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.toml
+
+# ── KanadeMinder runtime data ─────────────────────────────────────────────────
+# These live in ~/.kanademinder/ (outside the repo) — listed here as a reminder
+# that they should never be committed if someone symlinks or moves them in:
+config.toml.local
+tasks.db
+summary.html
+
+# ── Archived / superseded docs ────────────────────────────────────────────────
+README_old.md
+
+# ── PyInstaller / build artifacts ─────────────────────────────────────────────
+*.spec.bak
+# Keep KanadeMinder.spec committed; ignore PyInstaller's generated hooks dir:
+
+# ── Generated icon assets ──────────────────────────────────────────────────────
+assets/*.icns
+assets/*.iconset/
+
+# ── Miscellaneous ─────────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.bak
+.cache/

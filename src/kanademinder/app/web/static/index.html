@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KanadeMinder</title>
+  <style>__STYLE__</style>
+</head>
+<body>
+  <header>
+    <h1>KanadeMinder</h1>
+    <span id="sync-status">Loading…</span>
+    <button id="settings-btn" class="header-btn">Settings</button>
+  </header>
+
+  <div class="main">
+    <!-- ── Tasks panel ─────────────────────────────────────────────────────── -->
+    <div id="tasks-panel">
+      <div id="tasks-list">
+        <div id="tasks-empty">Loading tasks…</div>
+      </div>
+      <div id="suggestion-card">
+        <div class="suggestion-label">
+          Suggestion
+          <button id="refresh-suggestion" title="Refresh suggestion">↻</button>
+        </div>
+        <div id="suggestion-text" class="muted">Loading…</div>
+      </div>
+    </div>
+
+    <!-- ── Right panel ────────────────────────────────────────────────────── -->
+    <div id="right-panel">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="chat">Chat</button>
+        <button class="tab-btn" data-tab="daemon">Daemon</button>
+      </div>
+
+      <!-- Chat tab -->
+      <div class="tab-content active" id="tab-chat">
+        <div id="chat-messages"></div>
+        <div class="chat-input-bar">
+          <input id="chat-input" type="text" placeholder="Type a message…" autocomplete="off">
+          <button class="btn btn-primary" id="send-btn">Send</button>
+        </div>
+      </div>
+
+      <!-- Daemon tab -->
+      <div class="tab-content" id="tab-daemon">
+        <div id="daemon-panel">
+          <h2>Scheduler</h2>
+          <div id="last-tick">Last tick: never</div>
+          <button class="btn btn-secondary" id="tick-btn">Run Tick Now</button>
+          <div id="notif-list">
+            <span id="daemon-empty">No notifications yet. Run a tick to see results.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>__SCRIPT__</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KanadeMinder Settings</title>
+  <style>__STYLE__</style>
+</head>
+<body>
+  <header>
+    <h1>Settings</h1>
+  </header>
+  <div class="container">
+
+    <form id="settings-form">
+      <!-- LLM Section -->
+      <section class="settings-section">
+        <h2>LLM Configuration</h2>
+
+        <div class="form-group">
+          <label for="llm-provider">Provider</label>
+          <select id="llm-provider" name="llm.provider">
+            <option value="">Auto-detect</option>
+            <option value="openai">OpenAI</option>
+            <option value="anthropic">Anthropic</option>
+          </select>
+          <span class="help-text">Auto-detected from base URL if not specified</span>
+        </div>
+
+        <div class="form-group">
+          <label for="llm-base-url">Base URL <span class="required">*</span></label>
+          <input type="url" id="llm-base-url" name="llm.base_url" required
+                 placeholder="https://api.openai.com/v1">
+        </div>
+
+        <div class="form-group">
+          <label for="llm-api-key">API Key <span class="required">*</span></label>
+          <input type="password" id="llm-api-key" name="llm.api_key" required
+                 placeholder="sk-...">
+          <button type="button" class="toggle-password" data-target="llm-api-key">Show</button>
+        </div>
+
+        <div class="form-group">
+          <label for="llm-model">Model <span class="required">*</span></label>
+          <input type="text" id="llm-model" name="llm.model" required
+                 placeholder="gpt-4o">
+          <span class="help-text">e.g., gpt-4o, claude-sonnet-4-6, claude-opus-4-6</span>
+        </div>
+      </section>
+
+      <!-- Schedule Section -->
+      <section class="settings-section">
+        <h2>Schedule</h2>
+
+        <div class="form-group">
+          <label for="schedule-interval">Check Interval (minutes) <span class="required">*</span></label>
+          <input type="number" id="schedule-interval" name="schedule.interval_minutes"
+                 min="5" max="1440" required value="30">
+          <span class="help-text">How often to check for task reminders (5-1440)</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="schedule-start">Start of Day <span class="required">*</span></label>
+            <input type="text" id="schedule-start" name="schedule.start_of_day"
+                   pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]"
+                   placeholder="08:00" required value="08:00">
+          </div>
+
+          <div class="form-group">
+            <label for="schedule-end">End of Day <span class="required">*</span></label>
+            <input type="text" id="schedule-end" name="schedule.end_of_day"
+                   pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]"
+                   placeholder="22:00" required value="22:00">
+          </div>
+        </div>
+        <span class="help-text">Notifications are suppressed outside these hours</span>
+      </section>
+
+      <!-- Behavior Section -->
+      <section class="settings-section">
+        <h2>Behavior</h2>
+
+        <div class="form-group">
+          <label for="behavior-default-type">Default Task Type</label>
+          <select id="behavior-default-type" name="behavior.default_task_type">
+            <option value="major">Major</option>
+            <option value="minor">Minor</option>
+          </select>
+          <span class="help-text">Default type for new tasks</span>
+        </div>
+
+        <div class="form-group">
+          <label for="behavior-notif-mode">Notification Mode</label>
+          <select id="behavior-notif-mode" name="behavior.notification_mode">
+            <option value="banner">Banner (macOS notifications)</option>
+            <option value="webpage">Webpage (HTML report)</option>
+            <option value="both">Both</option>
+          </select>
+          <span class="help-text">Non-macOS always uses webpage</span>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="save-btn">Save Settings</button>
+        <button type="button" class="btn btn-secondary" id="cancel-btn">Close</button>
+      </div>
+      <p class="restart-notice">Changes take effect after restarting the app.</p>
+
+      <!-- Status Messages -->
+      <div id="status-message" class="status" style="display: none;"></div>
+    </form>
+  </div>
+
+  <script>__SCRIPT__</script>
+</body>
+</html>

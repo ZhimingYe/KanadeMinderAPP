@@ -1,0 +1,186 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
+  background: #f5f5f5; color: #1a1a1a; font-size: 14px; line-height: 1.5;
+  height: 100vh; display: flex; flex-direction: column;
+}
+
+header {
+  background: #fff; border-bottom: 1px solid #e0e0e0;
+  padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 1rem;
+}
+header h1 { font-size: 1.1rem; color: #111; }
+#sync-status { margin-left: auto; font-size: 0.78rem; color: #888; }
+
+.header-btn {
+  background: none;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: #555;
+  padding: 0.2rem 0.6rem;
+  line-height: 1.5;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.header-btn:hover {
+  background: #f0f0f0;
+  border-color: #bbb;
+  color: #111;
+}
+.main { display: flex; flex: 1; overflow: hidden; }
+
+/* ── Tasks panel ──────────────────────────────────────────────────────────── */
+#tasks-panel {
+  width: 300px; min-width: 220px; background: #fff;
+  border-right: 1px solid #e0e0e0; overflow-y: auto; padding: 0.8rem;
+}
+
+.section-header {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; margin: 1rem 0 0.4rem; padding-bottom: 0.25rem;
+  border-bottom: 2px solid currentColor;
+}
+.section-header.overdue   { color: #c0392b; }
+.section-header.due-today { color: #e67e22; }
+.section-header.upcoming  { color: #2980b9; }
+.section-header.no-dl     { color: #27ae60; }
+
+.task-item {
+  padding: 0.35rem 0.5rem; border-radius: 4px; margin-bottom: 2px;
+  display: flex; align-items: flex-start; gap: 0.4rem;
+}
+.task-item:hover { background: #f8f8f8; }
+
+.badge {
+  display: inline-block; padding: 0.1rem 0.35rem; border-radius: 3px;
+  font-size: 0.68rem; font-weight: 700; white-space: nowrap; flex-shrink: 0; margin-top: 1px;
+}
+.p5 { background: #fde8e8; color: #9b1c1c; }
+.p4 { background: #fef3e0; color: #b45309; }
+.p3 { background: #f3f4f6; color: #374151; }
+.p2 { background: #ecfdf5; color: #065f46; }
+.p1 { background: #f0fdf4; color: #166534; }
+
+.task-name { flex: 1; }
+.task-name .dl { font-size: 0.72rem; color: #888; display: block; }
+.task-name .dl.overdue-dl { color: #c0392b; }
+.task-name .dl.today-dl   { color: #e67e22; }
+.task-name .recur { font-size: 0.72rem; color: #aaa; }
+.subtask-indent { color: #bbb; }
+#tasks-empty { color: #aaa; font-size: 0.85rem; padding: 1rem 0.5rem; }
+
+/* ── Suggestion card ──────────────────────────────────────────────────────── */
+#suggestion-card {
+  margin: 0.8rem 0 0; border-top: 1px solid #eee; padding-top: 0.8rem;
+}
+#suggestion-card .suggestion-label {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: #0066cc; margin-bottom: 0.35rem;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+#suggestion-card .suggestion-label button {
+  background: none; border: none; cursor: pointer; padding: 0;
+  font-size: 0.75rem; color: #0066cc; line-height: 1; opacity: 0.7;
+}
+#suggestion-card .suggestion-label button:hover { opacity: 1; }
+#suggestion-text {
+  font-size: 0.82rem; color: #333; line-height: 1.45;
+  background: #f0f7ff; border-left: 3px solid #0066cc;
+  padding: 0.5rem 0.65rem; border-radius: 0 4px 4px 0;
+}
+#suggestion-text.muted { color: #aaa; font-style: italic; }
+
+/* ── Right panel ──────────────────────────────────────────────────────────── */
+#right-panel {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+}
+
+.tab-bar {
+  background: #fff; border-bottom: 1px solid #e0e0e0;
+  display: flex; gap: 0; padding: 0 1rem;
+}
+.tab-btn {
+  padding: 0.6rem 1rem; font-size: 0.85rem; border: none; background: none;
+  cursor: pointer; color: #666; border-bottom: 2px solid transparent;
+  transition: color 0.15s;
+}
+.tab-btn.active { color: #0066cc; border-bottom-color: #0066cc; }
+.tab-btn:hover:not(.active) { color: #333; }
+
+.tab-content { display: none; flex: 1; overflow: hidden; flex-direction: column; }
+.tab-content.active { display: flex; }
+
+/* ── Chat ─────────────────────────────────────────────────────────────────── */
+#chat-messages {
+  flex: 1; overflow-y: auto; padding: 1rem 1.2rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
+}
+
+.msg { max-width: 88%; padding: 0.5rem 0.8rem; border-radius: 8px; }
+.msg.user      { align-self: flex-end;   background: #0066cc; color: #fff; }
+.msg.assistant { align-self: flex-start; background: #fff; border: 1px solid #e0e0e0; }
+.msg.system    { align-self: center; background: #f0f0f0; color: #666; font-size: 0.78rem; font-style: italic; }
+
+/* Task table inside chat */
+.chat-task-table {
+  width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 0.5rem;
+}
+.chat-task-table th {
+  text-align: left; padding: 0.2rem 0.5rem; color: #aaa;
+  font-weight: 600; font-size: 0.7rem; text-transform: uppercase;
+  letter-spacing: 0.04em; border-bottom: 1px solid #eee;
+}
+.chat-task-table td { padding: 0.3rem 0.5rem; border-bottom: 1px solid #f5f5f5; vertical-align: top; }
+.chat-task-table tr:last-child td { border-bottom: none; }
+.chat-task-table .dl-overdue { color: #c0392b; font-size: 0.75rem; display: block; }
+.chat-task-table .dl-today   { color: #e67e22; font-size: 0.75rem; display: block; }
+.chat-task-table .dl-normal  { color: #888;    font-size: 0.75rem; display: block; }
+.chat-task-table .st-pending     { color: #b45309; }
+.chat-task-table .st-in_progress { color: #065f46; }
+.chat-task-table .st-done        { color: #aaa; }
+
+.chat-input-bar {
+  display: flex; gap: 0.5rem; padding: 0.8rem 1.2rem;
+  background: #fff; border-top: 1px solid #e0e0e0;
+}
+#chat-input {
+  flex: 1; padding: 0.5rem 0.75rem; border: 1px solid #ddd; border-radius: 6px;
+  font-size: 0.9rem; font-family: inherit; outline: none;
+}
+#chat-input:focus { border-color: #0066cc; }
+
+.btn {
+  padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer;
+  font-size: 0.85rem; font-family: inherit; transition: background 0.15s;
+  line-height: 1.5;
+}
+.btn-primary          { background: #0066cc; color: #fff; }
+.btn-primary:hover    { background: #0055aa; }
+.btn-primary:disabled { background: #aaa; cursor: default; }
+.btn-secondary        { background: #f0f0f0; color: #333; }
+.btn-secondary:hover  { background: #e0e0e0; }
+
+/* ── Daemon panel ─────────────────────────────────────────────────────────── */
+#daemon-panel { padding: 1.2rem; overflow-y: auto; }
+#daemon-panel h2 { font-size: 0.85rem; color: #555; font-weight: 600; margin-bottom: 0.8rem; }
+#last-tick { font-size: 0.82rem; color: #888; margin-bottom: 1rem; }
+
+.notif-card {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 6px;
+  padding: 0.75rem 1rem; margin-bottom: 0.75rem;
+}
+.notif-card .notif-title {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: #888; margin-bottom: 0.3rem;
+}
+.notif-card .notif-body { font-size: 0.88rem; color: #333; }
+#daemon-empty { color: #aaa; font-size: 0.85rem; }
+#tick-btn { margin-bottom: 1.2rem; }
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
