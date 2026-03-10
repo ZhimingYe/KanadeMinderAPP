@@ -12,6 +12,7 @@ Usage:
 Updates:
     pyproject.toml
     src/kanademinder/__init__.py
+    Makefile
 
 Then creates a git commit and tag (v<new_version>) unless --no-tag is passed.
 """
@@ -27,6 +28,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 PYPROJECT = ROOT / "pyproject.toml"
 INIT = ROOT / "src" / "kanademinder" / "__init__.py"
+MAKEFILE = ROOT / "Makefile"
 
 
 def read_current_version() -> str:
@@ -101,12 +103,16 @@ def main() -> None:
     update_file(INIT, r'^(__version__\s*=\s*)"[^"]+"', rf'\g<1>"{new}"')
     print(f"  updated: {INIT.relative_to(ROOT)}")
 
+    # Update Makefile
+    update_file(MAKEFILE, r'^(VERSION\s*:=\s*)\S+', rf'\g<1>{new}')
+    print(f"  updated: {MAKEFILE.relative_to(ROOT)}")
+
     if args.no_tag:
         print("(skipped git commit/tag)")
         return
 
     # Commit and tag
-    git("add", str(PYPROJECT.relative_to(ROOT)), str(INIT.relative_to(ROOT)))
+    git("add", str(PYPROJECT.relative_to(ROOT)), str(INIT.relative_to(ROOT)), str(MAKEFILE.relative_to(ROOT)))
     git("commit", "-m", f"chore: bump version to {new}")
     git("tag", f"v{new}")
     print(f"  git tag: v{new}")
