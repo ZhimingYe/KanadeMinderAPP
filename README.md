@@ -1,7 +1,5 @@
 # KanadeMinder
 
-Stop organizing your tasks. Just talk to them.
-
 KanadeMinder is a personal task manager powered by an LLM. Tell it what you need to do in plain English — it figures out the details, tracks deadlines, and nudges you at the right time so nothing slips through.
 
 ---
@@ -30,19 +28,9 @@ uv sync && make all
 make install
 ```
 
-**3. Set up your LLM key**
+You can use the desktop app on macOS. Open KanadeMinder and start typing.
 
-```bash
-kanademinder config setup
-```
-
-**4. Enable background reminders**
-
-```bash
-kanademinder install
-```
-
-That's it. Open KanadeMinder and start typing.
+All personal data is storaged in `~/.kanademinder/` . Never push online. 
 
 ---
 
@@ -57,9 +45,24 @@ kanademinder chat        # terminal
 kanademinder web         # browser at http://127.0.0.1:8080
 ```
 
+## Notifications
+
+You can use this to enable background reminders. Or use `daemon` tab on macOS desktop app. 
+
+```bash
+kanademinder install
+```
+
 ---
 
 ## Requirements
 
 - Python 3.11+, [uv](https://github.com/astral-sh/uv)
 - An API key for OpenAI, Anthropic, or any OpenAI-compatible provider
+
+---
+
+## Lisences
+
+MIT. All codes are generated with the help of Claude Code. For study only, please do not use this project in formal case. 
+
