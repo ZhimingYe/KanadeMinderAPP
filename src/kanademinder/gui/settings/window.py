@@ -11,7 +11,9 @@ import webview
 from kanademinder.gui.settings.api import SettingsAPI
 
 
-# Global reference to settings window to prevent garbage collection
+# Global reference to the settings window.
+# Created once and reused via show/hide — never destroyed while the app is running,
+# because recreating native windows on macOS leaves ghost entries in Mission Control.
 _settings_window: webview.Window | None = None
 
 
@@ -29,58 +31,43 @@ def _get_settings_html() -> str:
 
 
 def open_settings_window() -> webview.Window:
-    """Open the settings window.
-
-    Creates a new pywebview window with the settings GUI.
-    Returns the window object for reference.
-
-    If a settings window is already open, returns the existing window.
-    """
+    """Show the settings window, creating it the first time if needed."""
     global _settings_window
 
-    # Check if window is still tracked by pywebview (truly alive)
-    if _settings_window is not None:
-        if _settings_window in webview.windows:
-            _settings_window.show()
-            return _settings_window
-        else:
-            _settings_window = None
+    if _settings_window is None:
+        api = SettingsAPI()
+        html_content = _get_settings_html()
 
-    # Create API instance for this window
-    api = SettingsAPI()
+        _settings_window = webview.create_window(
+            title="KanadeMinder Settings",
+            html=html_content,
+            js_api=api,
+            width=600,
+            height=700,
+            min_size=(500, 500),
+            resizable=True,
+            text_select=True,
+            hidden=True,
+        )
 
-    # Get HTML content
-    html_content = _get_settings_html()
+        # Intercept the native close button (red X): hide instead of destroy.
+        # Returning False from a closing handler cancels the native close in pywebview.
+        def on_closing() -> bool:
+            _settings_window.hide()
+            return False
 
-    # Create the settings window
-    _settings_window = webview.create_window(
-        title="KanadeMinder Settings",
-        html=html_content,
-        js_api=api,
-        width=600,
-        height=700,
-        min_size=(500, 500),
-        resizable=True,
-        text_select=True,
-    )
+        _settings_window.events.closing += on_closing
 
-    # Set up close handler to reset the global reference
-    def on_closed():
-        global _settings_window
-        _settings_window = None
-
-    _settings_window.events.closed += on_closed
-
+    _settings_window.show()
     return _settings_window
 
 
 def close_settings_window() -> None:
-    """Close the settings window if it's open."""
+    """Hide the settings window if it is visible."""
     global _settings_window
 
     if _settings_window is not None:
         try:
-            _settings_window.destroy()
+            _settings_window.hide()
         except Exception:
             pass
-        _settings_window = None
