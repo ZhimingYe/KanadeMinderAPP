@@ -7,7 +7,7 @@
 #   make install   — copy .app to /Applications
 #   make clean     — remove build artifacts
 
-VERSION := 0.1.0
+VERSION := 0.3.1
 APP_NAME := KanadeMinder
 DIST_DIR := dist
 BUILD_DIR := build
