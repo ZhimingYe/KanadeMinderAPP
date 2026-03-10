@@ -2,6 +2,8 @@
 
 KanadeMinder is a personal task manager powered by an LLM. Tell it what you need to do in plain English — it figures out the details, tracks deadlines, and nudges you at the right time so nothing slips through.
 
+![KanadeMinder Screenshot](docs/kanademinderscreenshoot.jpg)
+
 ---
 
 ## What it does
