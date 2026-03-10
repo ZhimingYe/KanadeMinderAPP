@@ -62,7 +62,7 @@ kanademinder install
 
 ---
 
-## Lisences
+## License
 
 MIT. All codes are generated with the help of Claude Code. For study only, please do not use this project in formal case. 
 
