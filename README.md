@@ -1,0 +1,211 @@
+# KanadeMinder
+
+A command-line and desktop task manager that uses a large language model to help you track tasks and receive periodic scheduling reminders.
+
+You describe tasks in plain English through a chat interface. The LLM parses your intent, updates the database, and periodically summarizes what needs attention.
+
+---
+
+## Platform support
+
+| Feature | macOS | Linux | Windows |
+|---|---|---|---|
+| Chat (terminal REPL) | ✓ | ✓ | ✓ |
+| Web interface (browser) | ✓ | ✓ | ✓ |
+| Native desktop app (pywebview) | ✓ | — | — |
+| System banner notifications | ✓ | — | — |
+| Daemon auto-start (launchd) | ✓ | — | — |
+| HTML report (browser fallback) | ✓ | ✓ | ✓ |
+| Daemon setup guide | — | ✓ (systemd/cron) | ✓ (Task Scheduler) |
+
+On Linux and Windows, the daemon can be set up manually using the guide printed by `kanademinder install`. Notifications fall back to an HTML report opened in the default browser.
+
+---
+
+## Features
+
+- **Conversational task management.** Type natural language commands to create, update, delete, or list tasks. The LLM interprets your intent and applies changes.
+- **Subtasks.** Tasks can have parent–child relationships. Deleting a parent removes its children.
+- **Recurrence.** Tasks can repeat on a schedule: `daily`, `weekdays`, `weekly`, `monthly`, or `yearly`, with an optional end date. When a recurring task is marked done, the next occurrence is created automatically.
+- **Priority and deadlines.** Tasks carry a priority (1–5) and an optional deadline. The task list is sorted by priority, then deadline.
+- **Scheduling reminders.** A background daemon runs periodically and sends up to three notifications per tick: a summary of overdue and due-today tasks, a one-sentence LLM recommendation, and a reminder for the single most urgent task. Notifications are suppressed outside your configured hours.
+- **Web interface.** A local HTTP server serves a single-page app with a task list, chat panel, and daemon control panel.
+- **Native desktop app (macOS).** A pywebview window wraps the same web interface without running an HTTP server. A separate settings window lets you edit the config.
+- **Two LLM providers.** Works with any OpenAI-compatible API and with the Anthropic API. Provider is auto-detected from the base URL.
+
+---
+
+## Requirements
+
+- Python 3.11 or later
+- [uv](https://github.com/astral-sh/uv) (recommended) or pip
+- An API key for an OpenAI-compatible service or Anthropic
+- macOS, Linux, or Windows
+- `pywebview` — only needed for `kanademinder gui`
+
+---
+
+## Installation
+
+```bash
+# Clone and install in development mode
+git clone <repo-url>
+cd KanadeMinderAPP
+uv sync
+```
+
+Or with pip:
+
+```bash
+pip install -e .
+```
+
+---
+
+## Setup
+
+**1. Write the default config:**
+
+```bash
+kanademinder config init
+```
+
+This creates `~/.kanademinder/config.toml` with placeholder values.
+
+**2. Edit the config** and add your LLM API key:
+
+```toml
+[llm]
+base_url = "https://api.openai.com/v1"
+api_key  = "sk-..."
+model    = "gpt-4o"
+provider = ""          # leave empty for auto-detect
+
+[schedule]
+interval_minutes = 30
+start_of_day     = "08:00"
+end_of_day       = "22:00"
+
+[behavior]
+default_task_type   = "major"    # "major" or "minor"
+notification_mode   = "banner"   # "banner" | "webpage" | "both"
+```
+
+Alternatively, use the interactive wizard:
+
+```bash
+kanademinder config setup
+```
+
+**3. (macOS) Install the background daemon:**
+
+```bash
+kanademinder install
+```
+
+This registers a launchd agent at `~/Library/LaunchAgents/com.kanademinder.daemon.plist`. Run the command again to uninstall it.
+
+On Linux or Windows, `kanademinder install` prints instructions for setting up a cron job, systemd service, or Task Scheduler entry.
+
+---
+
+## Usage
+
+### Terminal chat
+
+```bash
+kanademinder chat
+```
+
+Type task commands in plain English. Examples:
+
+```
+> Add "Write report" due Friday, priority 4
+> Mark the report task as in progress
+> Show all overdue tasks
+> Delete the meeting subtask
+```
+
+Use the up/down arrow keys to navigate input history. The last 20 messages (10 turns) are kept in context.
+
+### Web interface
+
+```bash
+kanademinder web
+# or
+kanademinder web --host 127.0.0.1 --port 8080
+```
+
+Open `http://127.0.0.1:8080` in a browser. The page shows your task list on the left and a chat panel on the right. A daemon tab lets you trigger a manual tick and view recent notification history.
+
+### Native desktop app (macOS)
+
+```bash
+kanademinder gui
+```
+
+Opens a pywebview window with the same interface as the web app. API calls are routed through the Python bridge rather than HTTP. A settings window is accessible from the toolbar.
+
+### Run a single daemon tick manually
+
+```bash
+kanademinder daemon
+```
+
+Useful for testing notifications or running from a custom scheduler.
+
+---
+
+## Runtime files
+
+All runtime data is stored in `~/.kanademinder/`:
+
+| File | Contents |
+|---|---|
+| `config.toml` | Configuration |
+| `tasks.db` | SQLite database (schema auto-migrates) |
+| `summary.html` | HTML report generated by the daemon |
+
+---
+
+## Task fields
+
+| Field | Type | Notes |
+|---|---|---|
+| `name` | string | Required |
+| `type` | `major` / `minor` | Default set in config |
+| `status` | `pending` / `in_progress` / `done` | |
+| `priority` | 1–5 | 5 is highest |
+| `deadline` | datetime | Optional |
+| `estimated_minutes` | integer | Optional |
+| `notes` | string | Optional |
+| `recurrence` | string | `daily`, `weekdays`, `weekly`, `monthly`, `yearly` |
+| `recurrence_end` | date | Stop repeating after this date |
+| `parent_id` | integer | Links to a parent task |
+
+---
+
+## Development
+
+```bash
+# Run all tests
+uv run --with pytest pytest -v
+
+# Run with coverage
+uv run --with pytest --with pytest-cov pytest --cov=kanademinder
+
+# Lint
+uv run ruff check src/ tests/
+```
+
+The test suite does not make any real LLM API calls; all LLM responses are mocked.
+
+---
+
+## LLM provider notes
+
+**OpenAI-compatible** (default): Set `base_url` to any OpenAI-compatible endpoint. JSON mode is requested via `response_format`.
+
+**Anthropic**: Set `base_url` to `https://api.anthropic.com`. The client uses the `x-api-key` header, `anthropic-version: 2023-06-01`, and prefills `"{"` to request JSON output.
+
+The client retries up to three times with exponential backoff on rate-limit (429) and server error (5xx/529) responses, and respects the `Retry-After` header when present.

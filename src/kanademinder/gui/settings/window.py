@@ -38,16 +38,12 @@ def open_settings_window() -> webview.Window:
     """
     global _settings_window
 
-    # Check if window already exists and is not destroyed
+    # Check if window is still tracked by pywebview (truly alive)
     if _settings_window is not None:
-        try:
-            # Try to access window property to check if it's still valid
-            _ = _settings_window.title
-            # Window exists, bring it to front
+        if _settings_window in webview.windows:
             _settings_window.show()
             return _settings_window
-        except Exception:
-            # Window was closed/destroyed
+        else:
             _settings_window = None
 
     # Create API instance for this window
