@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name             = "kanademinder"
-version          = "0.3.1"
+version          = "0.3.5"
 requires-python  = ">= 3.11"
 dependencies     = ["rich>=13.0", "pywebview>=5.0"]
 
