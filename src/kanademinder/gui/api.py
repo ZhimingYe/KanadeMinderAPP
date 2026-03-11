@@ -16,6 +16,7 @@ from kanademinder.app.chat.handler import handle_turn, QUERY_RESPONSE_SENTINEL, 
 from kanademinder.app.daemon.html_report import build_html_report
 from kanademinder.app.daemon.scheduler import build_kanademinder_notifications
 from kanademinder.config import DB_PATH, load_config
+from kanademinder.gui.report.window import open_report_window
 from kanademinder.gui.settings.window import open_settings_window
 from kanademinder.db import list_tasks, open_db
 from kanademinder.llm.client import LLMClient
@@ -286,8 +287,6 @@ class KanadeMinderAPI:
                 - success: bool - whether window was opened
                 - error: str - error message if failed
         """
-        import webview
-
         with self._lock:
             html_content = self._daemon_state.get("last_html_report")
 
@@ -295,13 +294,7 @@ class KanadeMinderAPI:
             return {"success": False, "error": "No report available. Run a tick first."}
 
         try:
-            # Create a new window with the HTML report
-            webview.create_window(
-                title="KanadeMinder Report",
-                html=html_content,
-                width=900,
-                height=700,
-            )
+            open_report_window(html_content)
             return {"success": True, "error": None}
         except Exception as e:
             return {"success": False, "error": str(e)}

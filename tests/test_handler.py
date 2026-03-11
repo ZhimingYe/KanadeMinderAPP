@@ -535,6 +535,50 @@ def test_handle_batch_delete_partial_not_found(tmp_db):
     assert "not found" in result.lower() or "skip" in result.lower()
 
 
+# --- Batch update ---
+
+def test_handle_batch_update_deadline(tmp_db):
+    create_task(tmp_db, Task(name="整理gene2gene差异通路的结果"))
+    create_task(tmp_db, Task(name="理解gene2gene的算法"))
+    llm = _mock_llm({
+        "action": "update",
+        "task": None,
+        "tasks": [
+            {"id": 1, "deadline": "2026-03-13T23:59:00"},
+            {"id": 2, "deadline": "2026-03-13T23:59:00"},
+        ],
+        "message": "已将两个gene2gene相关任务延期到3月13日。",
+    })
+    history: list = []
+    result = handle_turn("两个gene2gene任务都要延期到3.13", history, llm, tmp_db)
+    task1 = get_task(tmp_db, 1)
+    task2 = get_task(tmp_db, 2)
+    assert task1.deadline == datetime(2026, 3, 13, 23, 59)
+    assert task2.deadline == datetime(2026, 3, 13, 23, 59)
+    assert "3月13" in result or "2026-03-13" in result or "Delayed" in result
+
+
+def test_handle_batch_update_by_name_fuzzy(tmp_db):
+    create_task(tmp_db, Task(name="整理gene2gene差异通路的结果"))
+    create_task(tmp_db, Task(name="理解gene2gene的算法"))
+    llm = _mock_llm({
+        "action": "update",
+        "task": None,
+        "tasks": [
+            {"name": "整理gene2gene差异通路的结果", "deadline": "2026-03-13T23:59:00"},
+            {"name": "理解gene2gene的算法", "deadline": "2026-03-13T23:59:00"},
+        ],
+        "message": "",
+    })
+    history: list = []
+    result = handle_turn("把两个gene2gene任务都延期到3月13日", history, llm, tmp_db)
+    task1 = get_task(tmp_db, 1)
+    task2 = get_task(tmp_db, 2)
+    assert task1.deadline == datetime(2026, 3, 13, 23, 59)
+    assert task2.deadline == datetime(2026, 3, 13, 23, 59)
+    assert "updated" in result.lower() or "#1" in result
+
+
 # --- Delete parent cascades to children ---
 
 def test_handle_delete_parent_removes_children(tmp_db):

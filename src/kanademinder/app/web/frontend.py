@@ -16,6 +16,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from kanademinder import __version__
+
 _STATIC = Path(__file__).parent / "static"
 
 _css      = (_STATIC / "style.css").read_text(encoding="utf-8")
@@ -23,7 +25,12 @@ _js       = (_STATIC / "app.js").read_text(encoding="utf-8")
 _template = (_STATIC / "index.html").read_text(encoding="utf-8")
 
 # Splice once at import time; no per-request file I/O
-_PAGE = _template.replace("__STYLE__", _css).replace("__SCRIPT__", _js)
+_PAGE = (
+    _template
+    .replace("__STYLE__", _css)
+    .replace("__SCRIPT__", _js)
+    .replace("__VERSION__", __version__)
+)
 
 
 def get_frontend_html() -> str:

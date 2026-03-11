@@ -33,6 +33,7 @@ import webview
 from kanademinder.config import CONFIG_PATH, DB_PATH
 from kanademinder.db import open_db
 from kanademinder.gui.api import KanadeMinderAPI
+from kanademinder.gui.report.window import close_report_window
 from kanademinder.gui.settings.window import open_settings_window
 from kanademinder.app.web.frontend import get_frontend_html
 
@@ -107,6 +108,17 @@ def create_html_with_bridge() -> str:
     // Also expose a ready promise for other code to use
     window.pywebviewReady = waitForPyWebViewAPI();
     </script>
+    <style>
+    body, body * {
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    input, textarea, select, option {
+        -webkit-user-select: text;
+        user-select: text;
+    }
+    </style>
     """
 
     # Insert the bridge script before </head>
@@ -190,6 +202,7 @@ def run_gui() -> None:
         # fires from a non-main thread on macOS — sys.exit() in a non-main thread
         # only raises SystemExit in that thread, leaving webview.start() blocked.
         from kanademinder.gui.settings.window import close_settings_window
+        close_report_window()
         close_settings_window()
         os._exit(0)
 

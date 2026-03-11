@@ -11,6 +11,13 @@ header {
   padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 1rem;
 }
 header h1 { font-size: 1.1rem; color: #111; }
+.brand-lockup { display: flex; align-items: baseline; gap: 0.45rem; flex-shrink: 0; }
+.version-note {
+  font-size: 0.72rem;
+  color: #888;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
 #sync-status { margin-left: auto; font-size: 0.78rem; color: #888; }
 
 .header-btn {

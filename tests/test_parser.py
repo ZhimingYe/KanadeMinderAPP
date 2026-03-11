@@ -38,6 +38,25 @@ def test_parse_update_action():
     assert result["task"]["id"] == 7
 
 
+def test_parse_batch_update_action():
+    raw = _json({
+        "action": "update",
+        "task": None,
+        "tasks": [
+            {"id": 7, "deadline": "2026-03-13 23:59"},
+            {"id": "8", "deadline": "2026-03-13"},
+        ],
+        "message": "Delayed both tasks.",
+    })
+    result = parse_task_action(raw)
+    assert result["action"] == "update"
+    assert result["task"] is None
+    assert result["tasks"][0]["id"] == 7
+    assert result["tasks"][0]["deadline"] == "2026-03-13T23:59:00"
+    assert result["tasks"][1]["id"] == 8
+    assert result["tasks"][1]["deadline"] == "2026-03-13T00:00:00"
+
+
 def test_parse_delete_action():
     raw = _json({
         "action": "delete",

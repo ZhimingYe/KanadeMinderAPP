@@ -104,6 +104,9 @@ User: "mark the report done"  (existing task id=2)
 User: "rename the report to Final Report"  (existing task id=2 named "Write report")
 → {{"action":"update","task":{{"id":2,"name":"Final Report"}},"tasks":null,"message":"Renamed task to 'Final Report'."}}
 
+User: "delay both gene2gene tasks to March 13"  (existing task ids=12 and 13)
+→ {{"action":"update","task":null,"tasks":[{{"id":12,"deadline":"2026-03-13 23:59"}},{{"id":13,"deadline":"2026-03-13 23:59"}}],"message":"Delayed both gene2gene tasks to March 13."}}
+
 User: "daily standup at 9am every weekday starting tomorrow"
 → {{"action":"create","task":{{"name":"Daily standup","deadline":"{today_iso} 09:00","recurrence":"weekdays","priority":3}},"tasks":null,"message":"Created 'Daily standup' recurring weekdays at 9am."}}
 
@@ -145,6 +148,7 @@ which one they mean. Always include "id" in the task object for update and \
 delete actions.
 - When the user wants to see their tasks, ALWAYS use action="query" with task=null and tasks=null. Never use action="none" to list tasks as text.
 - When the user asks to add/create multiple tasks in one message, use "tasks" (array) with task=null.
+- When the user asks to update multiple tasks in one message, use "tasks" (array) with task=null.
 - When the user asks to delete multiple tasks in one message, use "tasks" (array) with task=null.
 - When creating subtasks under a named project or parent: use "parent_name" (string) if the parent may not exist yet. Use "parent_id" (integer) only when you can see the parent already in the task list. Never set both; prefer "parent_name" when in doubt.
 - Deleting a parent task automatically deletes all its sub-tasks — no need to list them separately.

@@ -15,6 +15,7 @@ from kanademinder.app.chat.actions import (
     _format_task_list,
     _handle_batch_create,
     _handle_batch_delete,
+    _handle_batch_update,
     _handle_create,
     _handle_delete,
     _handle_update,
@@ -100,8 +101,11 @@ def handle_turn(
         elif task_data:
             message = _handle_create(conn, task_data, default_task_type, message)
 
-    elif action == "update" and task_data:
-        message = _handle_update(conn, task_data, message)
+    elif action == "update":
+        if tasks_data:
+            message = _handle_batch_update(conn, tasks_data, message)
+        elif task_data:
+            message = _handle_update(conn, task_data, message)
 
     elif action == "delete":
         if tasks_data:

@@ -295,6 +295,78 @@ def _handle_update(
     return result
 
 
+def _handle_batch_update(
+    conn: sqlite3.Connection,
+    tasks_data: list[dict[str, Any]],
+    message: str,
+) -> str:
+    """Handle updating multiple tasks at once."""
+    updated_labels: list[str] = []
+    skipped: list[str] = []
+    warnings: list[str] = []
+
+    for task_data in tasks_data:
+        task_id = task_data.get("id")
+
+        if task_id is None:
+            try:
+                task_id = _fuzzy_find_task(conn, task_data)
+            except _AmbiguousMatch as e:
+                names = ", ".join(f'#{t.id} "{t.name}"' for t in e.candidates[:4])
+                skipped.append(f"ambiguous match ({names})")
+                continue
+            if task_id is None:
+                name = task_data.get("name", "?")
+                skipped.append(f'"{name}" not found')
+                continue
+
+        task_id = int(task_id)
+        existing = get_task(conn, task_id)
+        if existing is None:
+            skipped.append(f"#{task_id} not found")
+            continue
+
+        updates = _task_updates_from_dict(task_data)
+        if not updates:
+            skipped.append(f"#{task_id} no changes")
+            continue
+
+        was_done_before = existing.status == TaskStatus.DONE
+        updated = update_task(conn, task_id, updates)
+        if updated is None:
+            skipped.append(f"#{task_id} not found")
+            continue
+
+        if updates.get("status") == TaskStatus.DONE:
+            mark_subtasks_done(conn, task_id)
+
+        if updates.get("status") == TaskStatus.DONE and not was_done_before and updated.recurrence:
+            next_task = advance_recurring_task(conn, updated)
+            if next_task and next_task.deadline:
+                warnings.append(
+                    f'Created next recurring copy for "#{updated.id}: {updated.name}" due {_fmt_deadline(next_task.deadline)}.'
+                )
+            elif next_task:
+                warnings.append(f'Created next recurring copy for "#{updated.id}: {updated.name}".')
+
+        updated_labels.append(f"#{updated.id}: {updated.name}")
+
+        if task_data.get("_deadline_parse_warning"):
+            bad = task_data["_deadline_parse_warning"]
+            warnings.append(f'Couldn\'t parse deadline "{bad}" for "{updated.name}".')
+
+    if not updated_labels:
+        detail = f" ({'; '.join(skipped)})" if skipped else ""
+        return message or f"No tasks were updated{detail}."
+
+    base = message or f"Updated {len(updated_labels)} tasks: {', '.join(updated_labels)}."
+    if skipped:
+        base += f" Skipped: {'; '.join(skipped)}."
+    if warnings:
+        base += " " + " ".join(warnings)
+    return base
+
+
 def _handle_delete(
     conn: sqlite3.Connection,
     task_data: dict[str, Any],
